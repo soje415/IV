@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createPassCode, normalisePassCode } from "@/lib/passcode";
+import { createPassCode, normalisePassCode, seedPassCode } from "@/lib/passcode";
 import type { ArrivalResult, NewRsvp, Rsvp, Totals } from "@/lib/types";
 
 /**
@@ -25,11 +25,11 @@ const store = (() => {
   return g.__inviteRsvps;
 })();
 
-function withIds(input: NewRsvp): Rsvp {
+function withIds(input: NewRsvp, passCode = createPassCode()): Rsvp {
   return {
     ...input,
     id: randomUUID(),
-    passCode: createPassCode(),
+    passCode,
     arrivedAt: null,
     createdAt: new Date().toISOString(),
     children: input.children.map((child) => ({ ...child, id: randomUUID() })),
@@ -150,5 +150,5 @@ function seed(): Rsvp[] {
     },
   ];
 
-  return base.map(withIds);
+  return base.map((rsvp) => withIds(rsvp, seedPassCode(rsvp.familyName)));
 }

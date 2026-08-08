@@ -34,9 +34,26 @@ function randomBody() {
   return out;
 }
 
+const format = (body: string) => `TAB-${body}-${sign(body)}`;
+
 export function createPassCode() {
-  const body = randomBody();
-  return `TAB-${body.slice(0, 4)}${body.slice(4)}-${sign(body)}`;
+  return format(randomBody());
+}
+
+/**
+ * A stable code derived from a string, for seed data only.
+ *
+ * Means the sample families keep the same pass links across restarts, so a
+ * /p/<code> URL stays bookmarkable while developing. Real RSVPs get random
+ * codes from `createPassCode`.
+ */
+export function seedPassCode(input: string) {
+  const digest = createHmac("sha256", "seed").update(input).digest();
+  let body = "";
+  for (let i = 0; i < BODY_LENGTH; i++) {
+    body += ALPHABET[digest[i] % ALPHABET.length];
+  }
+  return format(body);
 }
 
 export function isValidPassCode(code: string) {

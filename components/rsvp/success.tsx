@@ -1,10 +1,9 @@
 "use client";
 
 import { m } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import type { SubmitResult } from "@/app/actions";
-import { GoldenTicket } from "@/components/pass/golden-ticket";
-import { PassActions } from "@/components/pass/pass-actions";
+import { PassCard } from "@/components/pass/pass-card";
 
 /** Gold, pink and blue — one burst from each bottom corner, then the middle. */
 async function fireConfetti() {
@@ -51,9 +50,6 @@ function PassReveal({
 }: {
   result: Extract<SubmitResult, { ok: true; attending: true }>;
 }) {
-  const captureRef = useRef<HTMLDivElement>(null);
-  const [capturing, setCapturing] = useState(false);
-
   useEffect(() => {
     void fireConfetti();
   }, []);
@@ -77,29 +73,9 @@ function PassReveal({
         Here&apos;s your Golden Ticket
       </m.h3>
 
-      {/* The flip needs depth on the parent, not the card. */}
-      <div className="mt-7" style={{ perspective: 1400 }}>
-        <m.div
-          initial={{ rotateY: 105, opacity: 0, scale: 0.9 }}
-          animate={{ rotateY: 0, opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 90, damping: 15, delay: 0.35 }}
-        >
-          <GoldenTicket pass={result.pass} captureRef={captureRef} still={capturing} />
-        </m.div>
+      <div className="mt-7">
+        <PassCard pass={result.pass} reveal />
       </div>
-
-      <m.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.1, duration: 0.5 }}
-      >
-        <PassActions
-          pass={result.pass}
-          captureRef={captureRef}
-          onCaptureStart={() => setCapturing(true)}
-          onCaptureEnd={() => setCapturing(false)}
-        />
-      </m.div>
     </div>
   );
 }

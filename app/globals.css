@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  /* Shared — the gold that ties both worlds together */
+  --color-gold: #f5c542;
+  --color-gold-soft: #ffe6a8;
+  --color-gold-deep: #b8860b;
+  --color-ink: #140d24;
+  --color-cream: #fff9f0;
+
+  /* Tabitha's world — turning 4 */
+  --color-tab-pink: #ff8fc4;
+  --color-tab-lilac: #c3a4ff;
+  --color-tab-mint: #8feccf;
+  --color-tab-cream: #fff2f8;
+  --color-tab-deep: #6b2d5c;
+
+  /* Abraham's world — turning 10 */
+  --color-abe-blue: #4d8bff;
+  --color-abe-violet: #8b5cf6;
+  --color-abe-lime: #a3e635;
+  --color-abe-navy: #0b1330;
+  --color-abe-deep: #050a1c;
+
+  --font-display: var(--font-fredoka), system-ui, sans-serif;
+  --font-body: var(--font-nunito), system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    /* Anchor links land below the sticky safe area rather than under it. */
+    scroll-padding-top: 2rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-body);
+    /* Never allow a sideways scroll — see PLAN.md §8. */
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  /* Touch targets: nothing interactive smaller than a fingertip. */
+  button,
+  a[role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+@utility safe-b {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+@utility safe-t {
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+}
+
+/* The hero seam. Slightly tilted on phones, a full diagonal from md up. */
+@utility clip-panel-a {
+  clip-path: polygon(0 0, 100% 0, 100% 44%, 0 56%);
+  @media (width >= 48rem) {
+    clip-path: polygon(0 0, 58% 0, 42% 100%, 0 100%);
+  }
+}
+
+@utility clip-panel-b {
+  clip-path: polygon(0 56%, 100% 44%, 100% 100%, 0 100%);
+  @media (width >= 48rem) {
+    clip-path: polygon(58% 0, 100% 0, 100% 100%, 42% 100%);
+  }
+}
+
+@utility text-gold-gradient {
+  background: linear-gradient(
+    170deg,
+    var(--color-gold-soft) 0%,
+    var(--color-gold) 45%,
+    var(--color-gold-deep) 100%
+  );
+  background-clip: text;
+  color: transparent;
+}

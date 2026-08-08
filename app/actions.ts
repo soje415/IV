@@ -2,12 +2,14 @@
 
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
+import { passFromRsvp, type PassData } from "@/lib/pass";
 import { allowRequest } from "@/lib/rate-limit";
 import { rsvpSchema } from "@/lib/schema";
 import type { NewRsvp } from "@/lib/types";
 
 export type SubmitResult =
-  | { ok: true; passCode: string; familyName: string; attending: boolean }
+  | { ok: true; attending: true; pass: PassData }
+  | { ok: true; attending: false; familyName: string }
   | { ok: false; error: string };
 
 async function clientKey() {
@@ -30,7 +32,7 @@ export async function submitRsvp(raw: unknown): Promise<SubmitResult> {
   // Honeypot tripped: a bot filled a field no guest can see. Look successful so
   // it doesn't learn anything, but store nothing.
   if (data.website.length > 0) {
-    return { ok: true, passCode: "", familyName: data.familyName, attending: data.attending };
+    return { ok: true, attending: false, familyName: data.familyName };
   }
 
   if (!allowRequest(await clientKey())) {
@@ -60,10 +62,7 @@ export async function submitRsvp(raw: unknown): Promise<SubmitResult> {
 
   const rsvp = await db.createRsvp(clean);
 
-  return {
-    ok: true,
-    passCode: rsvp.passCode,
-    familyName: rsvp.familyName,
-    attending: rsvp.attending,
-  };
+  return rsvp.attending
+    ? { ok: true, attending: true, pass: passFromRsvp(rsvp) }
+    : { ok: true, attending: false, familyName: rsvp.familyName };
 }

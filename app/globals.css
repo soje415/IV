@@ -53,6 +53,23 @@
   }
 }
 
+/* Name tags print on white paper, not on the party's dark background. */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
 @utility safe-b {
   padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
 }

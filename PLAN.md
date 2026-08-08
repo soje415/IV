@@ -20,7 +20,7 @@ plus a host dashboard and a dead-simple door list.
 | Backend | **Cloudflare D1** (serverless SQLite), free plan. Local in-memory store as the dev fallback |
 | Visual direction | **Split dual-world** — united by a gold `4 & 10` monogram |
 | Access | **Open public link** + honeypot and rate limiting |
-| Door check-in | **Tap-the-name list. No QR scanner.** See §3 |
+| Door check-in | **Tap-the-name list, plus scanning with the phone's own camera. No scanner in the app.** See §3 |
 | Apple Wallet | **Dropped** — needs a paid Apple Developer cert. PNG + `.ics` + WhatsApp instead |
 | Target | **Mobile first.** Designed at 360px, scaled up. See §8 |
 | Hosting | **Cloudflare Workers** via `@opennextjs/cloudflare`. Not Pages — see §9 |
@@ -63,11 +63,40 @@ small text, a live `34 of 52 families arrived` counter pinned at the top.
 **Access for bouncers:** a secret link the host sends on WhatsApp that morning, gated by a
 4-digit PIN. No accounts, no passwords to distribute.
 
-**Offline:** the list is cached, and "mark arrived" is idempotent (it just sets `arrived_at`),
-so a failed write retries safely when signal returns. Far simpler than queuing scans.
+`DOOR_PIN` and `ADMIN_PIN` are separate. The host PIN opens both pages; the door PIN opens
+only `/door`, and the payload sent there carries no contacts, wishes or notes. The person on
+the gate is often a cousin or a hired hand — one shared PIN would hand them the full guest
+list. Google sign-in was considered and rejected: a successful Google login proves who
+somebody is, not that they are your bouncer, so it would need a staff allowlist on top, and it
+fails exactly when the door needs it most — a borrowed phone on venue wifi.
 
-The QR still prints on the pass — it opens `/p/<code>` so a parent can reopen their pass or
-forward it to their partner. It is just not the check-in mechanism.
+**Offline:** "mark arrived" is idempotent (it just sets `arrived_at`), so the client marks the
+row immediately, queues the write to `localStorage`, and retries on a timer and on the browser's
+`online` event. A duplicate retry reports the original arrival time rather than overwriting it.
+
+This is not full offline — with no service worker the page must have loaded once. It covers
+the failure that actually happens at a venue: signal dropping out while the list is already
+open on someone's phone. A service worker is the upgrade if the venue turns out to be a dead
+spot.
+
+**Scanning, without building a scanner**
+
+The QR prints on every pass and opens `/p/<code>`. That page now does double duty: for a
+parent it is the read-only pass, and for a request carrying a door session it shows the same
+**MARK ARRIVED** button as the list.
+
+So a bouncer *can* scan — with the phone's own camera app or Google Lens, which already
+handles focus, dim light and permissions far better than anything we would ship. We write no
+scanner code and take no camera permission, and the queue moves faster when a guest has their
+pass to hand.
+
+The two routes are independent on purpose. A flat guest phone, a forgotten pass or a dark
+doorway falls back to the list; a long list falls back to the camera. Neither is load-bearing
+for the other.
+
+Authority comes from the PIN cookie and never from the code itself, so nothing about the guest
+view changes: a parent scanning their own pass cannot check themselves in, and a forwarded
+screenshot checks in nobody.
 
 ## 4. Data model
 
@@ -108,7 +137,7 @@ of days after the event.
 | Route | Who | What |
 |---|---|---|
 | `/` | Public | Hero, countdown, details, map, dress code, RSVP flow, pass reveal |
-| `/p/<code>` | Public | Read-only pass view — what the QR opens |
+| `/p/<code>` | Public | Read-only pass view — what the QR opens. Becomes a check-in screen for a visitor holding a door session |
 | `/admin` | Host | Counts, allergy report, guest list, CSV export, name-tag printing |
 | `/door` | Bouncers | Tap-the-name arrival list, PIN gated |
 | `/wall` | Projector | Cycling birthday wishes left by guests |
@@ -223,8 +252,9 @@ generate a few hundred rows in total.
 9. ~~**Backend swap**~~ — **done early.** D1 adapter, migration and Workers config are in
 10. **Deploy** — Workers, custom domain, testing on a real mid-range phone
 
-Phases 1–5 are complete. The D1 layer landed ahead of schedule so the deployed site stores
-real RSVPs rather than losing them between requests.
+Phases 1–7 are complete. The D1 layer landed ahead of schedule so the deployed site stores
+real RSVPs rather than losing them between requests. `/wall` and the real deploy are what is
+left.
 
 ## 11. Still needed from the host
 

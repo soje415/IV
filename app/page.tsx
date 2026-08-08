@@ -4,6 +4,7 @@ import { Details } from "@/components/details";
 import { Balloons } from "@/components/particles";
 import { PreviewRibbon } from "@/components/preview-ribbon";
 import { Reveal } from "@/components/reveal";
+import { RsvpFlow } from "@/components/rsvp/rsvp-flow";
 import { SplitHero } from "@/components/split-hero";
 import { StickyRsvpBar } from "@/components/sticky-rsvp-bar";
 import { CELEBRANTS } from "@/config/event";
@@ -39,18 +40,16 @@ export default function Home() {
           className="relative mx-auto w-full max-w-2xl scroll-mt-8 px-5 pb-24 text-center"
         >
           <Reveal>
-            <div className="rounded-3xl border border-dashed border-gold/40 bg-white/5 p-8 sm:p-12">
-              <span className="text-4xl" aria-hidden="true">
-                🎟️
-              </span>
-              <h2 className="mt-4 font-display text-2xl font-bold text-cream sm:text-3xl">
-                Your family pass
-              </h2>
-              <p className="mt-3 font-body text-sm text-cream/70 sm:text-base">
-                The RSVP form and Golden Ticket pass land in the next build
-                phase. Tell us who&apos;s coming, and we&apos;ll hand you a pass
-                to show at the door.
-              </p>
+            <h2 className="font-display text-3xl font-bold text-cream sm:text-4xl">
+              Let us know you&apos;re coming
+            </h2>
+            <p className="mt-3 font-body text-sm text-cream/65 sm:text-base">
+              A few quick questions, then your pass is ready.
+            </p>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <div className="mt-8 text-left">
+              <RsvpFlow />
             </div>
           </Reveal>
         </section>

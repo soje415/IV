@@ -1,6 +1,6 @@
-import { isSignedIn } from "@/lib/admin-auth";
 import { rsvpsToCsv } from "@/lib/csv";
 import { db } from "@/lib/db";
+import { isSignedIn } from "@/lib/gate";
 
 /**
  * The guest list as a spreadsheet.
@@ -9,7 +9,7 @@ import { db } from "@/lib/db";
  * allergies and parents' phone numbers in it.
  */
 export async function GET() {
-  if (!(await isSignedIn())) {
+  if (!(await isSignedIn("host"))) {
     return new Response("Not signed in", { status: 401 });
   }
 

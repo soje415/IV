@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CELEBRANTS } from "@/config/event";
-import { isSignedIn } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
+import { isSignedIn } from "@/lib/gate";
 import { avatarById } from "@/lib/types";
 
 /**
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function NameTagsPage() {
-  if (!(await isSignedIn())) redirect("/admin");
+  if (!(await isSignedIn("host"))) redirect("/admin");
 
   const rsvps = await db.listRsvps();
   const tags = rsvps

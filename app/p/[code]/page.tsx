@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ScanCheckIn } from "@/components/door/scan-check-in";
 import { PassCard } from "@/components/pass/pass-card";
 import { PreviewRibbon } from "@/components/preview-ribbon";
 import {
@@ -10,16 +11,23 @@ import {
   eventTimeLabel,
 } from "@/config/event";
 import { db } from "@/lib/db";
+import { toDoorFamily } from "@/lib/door";
+import { isSignedIn } from "@/lib/gate";
 import { passFromRsvp } from "@/lib/pass";
 import { isValidPassCode } from "@/lib/passcode";
 
 /**
- * The read-only pass view — what the QR code on a Golden Ticket opens.
+ * The pass view — what the QR code on a Golden Ticket opens.
  *
- * Read-only is the whole point: this page shows a pass, it never marks anyone
- * as arrived. A guest scanning their own code must not be able to check
- * themselves in, and a forwarded screenshot must not check in a stranger.
- * Arrival happens on /door, behind the PIN. See PLAN.md §3.
+ * Read-only for guests, and that is the whole point: a guest scanning their own
+ * code must not be able to check themselves in, and a forwarded screenshot must
+ * not check in a stranger.
+ *
+ * The one exception is a request carrying a door session. For a bouncer this
+ * page doubles as the check-in screen, so pointing the phone's camera at a
+ * guest's QR is a faster route to the same MARK ARRIVED button as finding them
+ * on /door. Authority comes from the PIN cookie, never from the code — so the
+ * page a parent sees is unchanged. See PLAN.md §3.
  */
 
 export const metadata: Metadata = {
@@ -38,6 +46,7 @@ export default async function PassPage({ params }: PageProps<"/p/[code]">) {
   const rsvp = await db.getByPassCode(code);
   if (!rsvp) notFound();
 
+  const atTheDoor = await isSignedIn("door");
   const { tabitha, abraham } = CELEBRANTS;
 
   return (
@@ -59,7 +68,10 @@ export default async function PassPage({ params }: PageProps<"/p/[code]">) {
         {rsvp.attending ? (
           <>
             <PassCard pass={passFromRsvp(rsvp)} />
-            {rsvp.arrivedAt ? <ArrivedBadge at={rsvp.arrivedAt} /> : null}
+            {rsvp.arrivedAt && !atTheDoor ? (
+              <ArrivedBadge at={rsvp.arrivedAt} />
+            ) : null}
+            {atTheDoor ? <ScanCheckIn family={toDoorFamily(rsvp)} /> : null}
           </>
         ) : (
           <CannotMakeIt familyName={rsvp.familyName} />

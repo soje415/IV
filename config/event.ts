@@ -68,8 +68,12 @@ export const EVENT = {
   hostPhone: "",
   hostName: "The Ajayi family",
 
-  /** Used to build QR and share links. TODO(host): real domain. */
-  siteUrl: "https://ajayi-invite.vercel.app",
+  /**
+   * Used to build QR and share links, so it must match where the site actually
+   * lives — a pass issued against the wrong origin has a QR that goes nowhere.
+   * TODO(host): swap for the custom domain, if there is one, and redeploy.
+   */
+  siteUrl: "https://ajayi-invite.soje415.workers.dev",
 };
 
 export const START_DATE = new Date(EVENT.startsAt);

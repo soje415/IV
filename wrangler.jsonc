@@ -22,7 +22,7 @@
     {
       "binding": "DB",
       "database_name": "ajayi-invite",
-      "database_id": "REPLACE_WITH_DATABASE_ID",
+      "database_id": "d5605d0b-fda8-42f1-9965-fc4b5c3df780",
       "migrations_dir": "migrations"
     }
   ]

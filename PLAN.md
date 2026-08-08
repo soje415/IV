@@ -17,12 +17,13 @@ plus a host dashboard and a dead-simple door list.
 | Question | Decision |
 |---|---|
 | Guest model | **Family headcount** — adults count + a list of children (name, age, allergy) |
-| Backend | **Deferred.** Build against a local adapter now; drop in Supabase or Firebase later |
+| Backend | **Cloudflare D1** (serverless SQLite), free plan. Local in-memory store as the dev fallback |
 | Visual direction | **Split dual-world** — united by a gold `4 & 10` monogram |
 | Access | **Open public link** + honeypot and rate limiting |
 | Door check-in | **Tap-the-name list. No QR scanner.** See §3 |
 | Apple Wallet | **Dropped** — needs a paid Apple Developer cert. PNG + `.ics` + WhatsApp instead |
 | Target | **Mobile first.** Designed at 360px, scaled up. See §8 |
+| Hosting | **Cloudflare Workers** via `@opennextjs/cloudflare`. Not Pages — see §9 |
 
 ## 2. Why family headcount, not "+1"
 
@@ -189,8 +190,25 @@ on a phone.
 | Forms | React Hook Form + Zod | One schema, client and server validation |
 | QR | `qrcode.react` | Client-side, no backend cost |
 | Pass export | `modern-screenshot` | Reliable PNG. `html2canvas` is unmaintained and mangles modern CSS |
-| Data | `lib/db.ts` adapter | Local store now; Supabase or Firebase later, no UI changes |
-| Hosting | Vercel | Free tier, custom domain, edge |
+| Data | **Cloudflare D1** behind `lib/db-types.ts` | SQLite. Free plan covers this event many times over |
+| Hosting | **Cloudflare Workers** | One deploy ships site and database together |
+
+### Why Workers, not Pages
+
+Cloudflare's Next.js guide now targets **Workers** through `@opennextjs/cloudflare`, which
+supports server actions and SSR on the Node.js runtime with the `nodejs_compat` flag. The Pages
+route uses the older `@cloudflare/next-on-pages` adapter, which requires the edge runtime on
+every route — Next 16 with server actions will not build there. A failing Pages build is the
+expected outcome, not a misconfiguration.
+
+### Why D1, not Supabase
+
+One vendor, one deploy, no second network hop, and the schema in §4 drops in as-is. Free plan:
+5 GB storage, 5 million rows read per day, 100,000 rows written per day. This party will
+generate a few hundred rows in total.
+
+`lib/db.ts` picks D1 when the binding is present and the in-memory store otherwise, so
+`next dev` still runs with no Cloudflare account and no wrangler in the loop.
 
 ## 10. Build phases
 
@@ -202,10 +220,11 @@ on a phone.
 6. **`/admin`** — counts, allergy report, CSV, name tags
 7. **`/door`** — arrival list, PIN gate, offline cache
 8. **`/wall`** — projector wishes
-9. **Backend swap** — implement the adapter against Supabase or Firebase
-10. **Deploy** — Vercel, custom domain, testing on a real mid-range phone
+9. ~~**Backend swap**~~ — **done early.** D1 adapter, migration and Workers config are in
+10. **Deploy** — Workers, custom domain, testing on a real mid-range phone
 
-Phases 1–8 need no backend decision. Phase 9 is a single file.
+Phases 1–5 are complete. The D1 layer landed ahead of schedule so the deployed site stores
+real RSVPs rather than losing them between requests.
 
 ## 11. Still needed from the host
 

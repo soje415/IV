@@ -1,22 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { getD1 } from "@/lib/d1";
+import { d1Db } from "@/lib/db-d1";
+import type { InviteDb } from "@/lib/db-types";
 import { createPassCode, normalisePassCode, seedPassCode } from "@/lib/passcode";
-import type { ArrivalResult, NewRsvp, Rsvp, Totals } from "@/lib/types";
+import type { NewRsvp, Rsvp } from "@/lib/types";
 
-/**
- * The one seam between the app and whatever database we settle on.
- *
- * Every screen talks to `db` and nothing else, so swapping the local store for
- * Supabase or Firebase later is a single new implementation of this interface —
- * no UI changes. See PLAN.md §9.
- */
-export interface InviteDb {
-  createRsvp(input: NewRsvp): Promise<Rsvp>;
-  listRsvps(): Promise<Rsvp[]>;
-  getByPassCode(code: string): Promise<Rsvp | null>;
-  /** Idempotent: marking an arrived family again reports the original time. */
-  markArrived(id: string): Promise<ArrivalResult>;
-  totals(): Promise<Totals>;
-}
+export type { InviteDb } from "@/lib/db-types";
 
 /** Survives Next's dev hot reload, which re-evaluates modules. */
 const store = (() => {
@@ -84,7 +73,29 @@ export const localDb: InviteDb = {
   },
 };
 
-export const db: InviteDb = localDb;
+/**
+ * Cloudflare D1 when the binding is there, the in-memory store otherwise.
+ *
+ * Resolved per call rather than at module load: on Workers the binding is only
+ * reachable inside a request, and during `next dev` there is none at all.
+ */
+async function backend(): Promise<InviteDb> {
+  const binding = await getD1();
+  return binding ? d1Db(binding) : localDb;
+}
+
+/** True when RSVPs are going into memory and will not survive a restart. */
+export async function isEphemeral(): Promise<boolean> {
+  return (await getD1()) === null;
+}
+
+export const db: InviteDb = {
+  createRsvp: async (input) => (await backend()).createRsvp(input),
+  listRsvps: async () => (await backend()).listRsvps(),
+  getByPassCode: async (code) => (await backend()).getByPassCode(code),
+  markArrived: async (id) => (await backend()).markArrived(id),
+  totals: async () => (await backend()).totals(),
+};
 
 /** Sample families so the dashboard and door list have something to show. */
 function seed(): Rsvp[] {

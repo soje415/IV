@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ajayi-invite",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-25",
+  // Required by the adapter, and by node:crypto in lib/passcode.ts.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  "observability": {
+    "enabled": true
+  },
+
+  // The party database. Create it once with:
+  //   npx wrangler d1 create ajayi-invite
+  // then paste the returned id below and run `npm run db:migrate:remote`.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ajayi-invite",
+      "database_id": "REPLACE_WITH_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

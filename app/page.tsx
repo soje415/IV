@@ -9,6 +9,15 @@ import { SplitHero } from "@/components/split-hero";
 import { StickyRsvpBar } from "@/components/sticky-rsvp-bar";
 import { CELEBRANTS } from "@/config/event";
 
+/**
+ * Rendered per request, not at build time.
+ *
+ * The preview ribbon asks whether a database is actually bound, and that answer
+ * only exists inside a request on Cloudflare. Prerendering would freeze
+ * "RSVPs are not being saved yet" into the page forever.
+ */
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>

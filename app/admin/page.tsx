@@ -10,6 +10,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * ADMIN_PIN is a runtime secret, so it is absent at build time. Without this,
+ * the unset-PIN branch returns before anything touches cookies, Next prerenders
+ * "Dashboard locked" as a static page, and the real PIN is never consulted on
+ * the deployed site.
+ */
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   if (!configuredPin("host")) {
     return (

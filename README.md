@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IV — Ajayi double birthday invite
 
-## Getting Started
+A mobile-first invite that turns an RSVP into a downloadable Golden Ticket pass,
+plus a host dashboard and a door check-in list. See [PLAN.md](./PLAN.md) for the
+design decisions behind it.
 
-First, run the development server:
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+There is no Cloudflare account or wrangler in the loop for `next dev`: `lib/db.ts`
+falls back to an in-memory store, seeded with a few sample families so `/admin`
+and `/door` have something to show. RSVPs made this way vanish on restart.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Dev-only PINs, so the staff pages are reachable without setting secrets:
 
-## Learn More
+| Page | PIN |
+|---|---|
+| `/admin` | `0000` |
+| `/door` | `1234` |
 
-To learn more about Next.js, take a look at the following resources:
+Both are development-only. In production an unset PIN locks that page outright
+rather than falling back to a guessable default — see `lib/gate.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploying — Workers, not Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**This app cannot be built on Cloudflare Pages.** That is a property of the
+stack, not a misconfiguration, so a failing Pages build is the expected result
+and no amount of build-command tweaking will fix it:
 
-## Deploy on Vercel
+- Pages runs Next.js through `@cloudflare/next-on-pages`, which requires
+  `export const runtime = "edge"` on *every* server route. This app uses server
+  actions and `node:crypto` on the Node.js runtime.
+- Cloudflare has put that adapter into maintenance and now points Next.js users
+  at Workers.
+- `@opennextjs/cloudflare` — what this project uses — only emits a Worker
+  (`.open-next/worker.js`). There is no Pages output to deploy.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If a Pages project is already connected to this repo, delete it and create a
+**Worker** instead. One deploy then ships the site and its database together.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### First deploy
+
+```bash
+# 1. Create the database, then paste the printed id into wrangler.jsonc
+npm run db:create
+
+# 2. Create the schema
+npm run db:migrate:remote
+
+# 3. Set the secrets (each prompts for a value)
+npx wrangler secret put ADMIN_PIN     # host dashboard
+npx wrangler secret put DOOR_PIN      # door list
+npx wrangler secret put PASS_SECRET   # signs pass codes and session cookies
+
+# 4. Ship it
+npm run deploy
+```
+
+`wrangler.jsonc` ships with `"database_id": "REPLACE_WITH_DATABASE_ID"`. Step 1
+prints the real id — the deploy fails until it is pasted in.
+
+### Checking it before you ship
+
+```bash
+npm run preview   # production build, running locally on workerd + local D1
+```
+
+`npm run preview` is the build that matters. A passing `next build` only proves
+the app compiles; it says nothing about the Workers bundle.
+
+### Secrets
+
+| Name | Used for | Unset in production |
+|---|---|---|
+| `ADMIN_PIN` | `/admin` | Dashboard locked |
+| `DOOR_PIN` | `/door` | Door list locked |
+| `PASS_SECRET` | HMAC for pass codes and session cookies | Falls back to a known dev value — **always set this** |
+
+Rotating a PIN signs out every session using it, because the session cookie is
+an HMAC over the PIN itself.
+
+## Routes
+
+| Route | Who | What |
+|---|---|---|
+| `/` | Public | Hero, countdown, details, RSVP flow, pass reveal |
+| `/p/<code>` | Public | Read-only pass — what the QR opens. Shows check-in instead when the visitor holds a door session |
+| `/admin` | Host | Counts, allergy report, guest list, CSV export, name tags |
+| `/door` | Bouncers | Tap-the-name arrival list |

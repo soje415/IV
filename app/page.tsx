@@ -1,5 +1,6 @@
 import { Countdown } from "@/components/countdown";
 import { Curtain } from "@/components/curtain";
+import { DeveloperCredit } from "@/components/developer-credit";
 import { Details } from "@/components/details";
 import { Balloons } from "@/components/particles";
 import { PreviewRibbon } from "@/components/preview-ribbon";
@@ -70,16 +71,10 @@ export default function Home() {
             Made with love for {CELEBRANTS.tabitha.firstName} &amp;{" "}
             {CELEBRANTS.abraham.firstName}
           </p>
-          {/* Wide tracking on the full company name overflows a 360px screen,
-              so the label and the name sit on their own lines. Both are sized
-              and weighted to actually be readable on a phone — at 9px and 25%
-              opacity this credit was invisible in daylight. */}
           <p className="mt-5 font-body text-[10px] tracking-[0.25em] text-cream/55 uppercase">
             Powered by
           </p>
-          <p className="mt-1 font-body text-sm font-bold tracking-[0.08em] text-gold uppercase">
-            Bond Sustainable Intergrated Limited
-          </p>
+          <DeveloperCredit />
         </footer>
       </main>
 

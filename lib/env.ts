@@ -1,17 +1,16 @@
 /**
  * Read a secret or plain-text variable.
  *
- * On Workers these arrive as Cloudflare *bindings*, not real environment
- * variables. The adapter mirrors string bindings into `process.env`, but that
- * copy is not reliable: a secret added after the Worker was first created never
- * appears there. Measured on this deployment — `getCloudflareContext().env` had
- * ADMIN_PIN while `process.env.ADMIN_PIN` was undefined, and PASS_SECRET was
- * present in both only because it happened to exist before the first deploy.
+ * On Workers these arrive as Cloudflare *bindings*. The adapter does mirror
+ * string bindings into `process.env`, so both work — but the binding is the
+ * documented source of truth and does not depend on that mirroring, so it is
+ * what we read first. `process.env` remains the fallback for `next dev` and
+ * `.env.local`, where there is no Cloudflare context at all.
  *
- * So the binding is the source of truth and `process.env` is the fallback, for
- * `next dev` and `.env.local` where there is no Cloudflare context at all.
- * Getting this backwards is why the dashboard stayed locked, and it would have
- * silently signed pass codes with the development secret.
+ * An empty or whitespace-only value counts as unset. That matters: a secret
+ * uploaded with a blank value is indistinguishable from a typo at the prompt,
+ * and treating "" as configured would put an empty PIN on the door. A locked
+ * page is the safe reading of a blank secret.
  */
 export async function readEnv(name: string): Promise<string | undefined> {
   try {

@@ -67,13 +67,13 @@ export default function Home() {
         </section>
 
         {/*
-          pb-40 is clearance, not decoration. The sticky RSVP bar is fixed to
+          pb-24 is clearance, not decoration. The sticky RSVP bar is fixed to
           the bottom and stands ~92px tall (12px pad + 56px button + safe-area
-          inset), with an ink gradient behind it — so without this the credit
-          below "Powered by" sits underneath the bar and cannot be read or
-          tapped. Keep this larger than the bar if either one changes height.
+          inset). It now retracts once the footer is in view, but this padding
+          covers the moment before it does — and the contact card opens upward
+          from here, so it needs room beneath it too.
         */}
-        <footer className="relative border-t border-white/10 px-5 pt-8 pb-40 text-center">
+        <footer className="relative border-t border-white/10 px-5 pt-8 pb-24 text-center">
           <p className="font-body text-xs text-cream/40">
             Made with love for {CELEBRANTS.tabitha.firstName} &amp;{" "}
             {CELEBRANTS.abraham.firstName}

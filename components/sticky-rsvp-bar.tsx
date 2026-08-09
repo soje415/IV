@@ -4,18 +4,31 @@ import { AnimatePresence, m, useMotionValueEvent, useScroll } from "motion/react
 import { useState } from "react";
 
 /**
- * Slides up once the guest has scrolled past the hero.
+ * Slides up once the guest has scrolled past the hero, and back down at the
+ * bottom of the page.
  *
  * Keeps the hero uncluttered while making sure the one action that matters is
- * always a thumb away on a phone.
+ * always a thumb away on a phone — but it must not be the last thing on the
+ * page. Pinned to the bottom it covers the footer, so it retracts once the
+ * footer comes into view and the credits are readable.
  */
+
+/** How close to the bottom counts as "the footer is on screen". */
+const BOTTOM_GAP = 220;
+
 export function StickyRsvpBar() {
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (y) => {
-    const past = typeof window !== "undefined" ? window.innerHeight * 0.75 : 600;
-    setVisible(y > past);
+    if (typeof window === "undefined") return;
+
+    const pastHero = y > window.innerHeight * 0.75;
+    const atBottom =
+      y + window.innerHeight >=
+      document.documentElement.scrollHeight - BOTTOM_GAP;
+
+    setVisible(pastHero && !atBottom);
   });
 
   return (

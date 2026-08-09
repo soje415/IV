@@ -50,7 +50,7 @@ export function DeveloperCredit() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="min-h-11 font-body text-sm font-bold tracking-[0.08em] text-gold uppercase underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold-soft"
+        className="min-h-11 font-body text-[11px] font-bold tracking-[0.1em] text-gold/85 uppercase underline decoration-gold/30 underline-offset-4 transition-colors hover:text-gold"
       >
         {DEVELOPER.name}
       </button>

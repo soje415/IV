@@ -53,7 +53,9 @@ export function DoorList({ families }: { families: DoorFamily[] }) {
 
   return (
     <div className="mx-auto w-full max-w-lg pb-24">
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-ink/95 px-4 pt-4 pb-3 backdrop-blur">
+      {/* safe-t, not pt-4: viewportFit is "cover", so on a notched phone a
+          plain top padding puts the arrival counter under the status bar. */}
+      <header className="safe-t sticky top-0 z-20 border-b border-white/10 bg-ink/95 px-4 pb-3 backdrop-blur">
         <div className="flex items-baseline justify-between gap-3">
           <p className="font-display text-xl font-bold text-cream tabular-nums">
             {arrived}{" "}

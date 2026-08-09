@@ -68,19 +68,28 @@ export function Details() {
       title: "Gifts",
       lines: [EVENT.giftPolicy],
     },
-    {
+  ];
+
+  // Both of these are omissions the host chose. An empty card that says a
+  // detail is "coming soon" reads as an unfinished site, not a decision.
+  const deadline = rsvpDeadlineLabel();
+  if (deadline) {
+    cards.push({
       icon: "⏳",
       title: "RSVP by",
-      lines: [rsvpDeadlineLabel(), "So we can count cake and party bags"],
-    },
-    {
+      lines: [deadline, "So we can count cake and party bags"],
+    });
+  }
+
+  if (EVENT.hostPhone) {
+    cards.push({
       icon: "💬",
       title: "Questions",
-      lines: [EVENT.hostName, EVENT.hostPhone || "Contact number coming soon"],
-      href: EVENT.hostPhone ? `tel:${EVENT.hostPhone.replace(/\s/g, "")}` : undefined,
+      lines: [EVENT.hostName, EVENT.hostPhone],
+      href: `tel:${EVENT.hostPhone.replace(/\s/g, "")}`,
       hrefLabel: "Call us",
-    },
-  ];
+    });
+  }
 
   return (
     <section id="details" className="mx-auto w-full max-w-5xl px-5 py-16 sm:py-24">

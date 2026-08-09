@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Countdown } from "@/components/countdown";
 import { Curtain } from "@/components/curtain";
 import { Details } from "@/components/details";
+import { VenueMap } from "@/components/map";
 import { Balloons } from "@/components/particles";
 import { PreviewRibbon } from "@/components/preview-ribbon";
 import { Reveal } from "@/components/reveal";
@@ -44,6 +45,7 @@ export default function Home() {
         </section>
 
         <Details />
+        <VenueMap />
 
         <section
           id="rsvp"

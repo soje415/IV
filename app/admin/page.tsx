@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  if (!configuredPin("host")) {
+  if (!(await configuredPin("host"))) {
     return (
       <main className="flex flex-1 items-center justify-center">
         <NoPinConfigured title="Dashboard locked" envVar="ADMIN_PIN" />

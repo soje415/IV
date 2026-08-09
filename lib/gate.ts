@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { isDev, readEnv } from "@/lib/env";
 
 /**
  * PIN gates for the two staff views.
@@ -13,6 +14,9 @@ import { cookies } from "next/headers";
  * often a cousin or a hired hand, gets the link on WhatsApp that morning, and
  * only needs /door. One PIN for both would mean handing the full guest list to
  * whoever is on the gate.
+ *
+ * Everything here is async because the PINs are Cloudflare bindings, readable
+ * only from inside a request. See lib/env.ts.
  */
 
 export type Role = "host" | "door";
@@ -30,19 +34,23 @@ const MAX_AGE = 60 * 60 * 12; // A long party day, then sign out.
  * A weak default in production would be worse than no dashboard at all, so
  * outside development an unset PIN locks that door completely.
  */
-export function configuredPin(role: Role): string | null {
-  const pin = process.env[ROLES[role].env]?.trim();
+export async function configuredPin(role: Role): Promise<string | null> {
+  const pin = (await readEnv(ROLES[role].env))?.trim();
   if (pin) return pin;
-  return process.env.NODE_ENV === "development" ? ROLES[role].devPin : null;
+  return isDev() ? ROLES[role].devPin : null;
 }
 
-function secret() {
-  return process.env.PASS_SECRET ?? "dev-only-pass-secret-change-in-production";
+async function secret() {
+  return (
+    (await readEnv("PASS_SECRET")) ?? "dev-only-pass-secret-change-in-production"
+  );
 }
 
 /** Binding role and PIN into the token means rotating either logs those sessions out. */
-function tokenFor(role: Role, pin: string) {
-  return createHmac("sha256", secret()).update(`${role}-session:${pin}`).digest("hex");
+async function tokenFor(role: Role, pin: string) {
+  return createHmac("sha256", await secret())
+    .update(`${role}-session:${pin}`)
+    .digest("hex");
 }
 
 function equals(a: string, b: string) {
@@ -62,28 +70,34 @@ function rolesFor(role: Role): Role[] {
   return role === "door" ? ["door", "host"] : ["host"];
 }
 
-export function pinMatches(role: Role, candidate: string) {
+/** The role whose PIN this actually is, or null. */
+async function matchRole(role: Role, candidate: string): Promise<Role | null> {
   const trimmed = candidate.trim();
-  return rolesFor(role).some((r) => {
-    const pin = configuredPin(r);
-    return pin !== null && equals(trimmed, pin);
-  });
+  for (const r of rolesFor(role)) {
+    const pin = await configuredPin(r);
+    if (pin !== null && equals(trimmed, pin)) return r;
+  }
+  return null;
+}
+
+export async function pinMatches(role: Role, candidate: string) {
+  return (await matchRole(role, candidate)) !== null;
 }
 
 export async function startSession(role: Role, pin: string) {
   // Issue the cookie for whichever role's PIN was actually entered, so a host
   // signing in at the door gets a host cookie and keeps it on /admin too.
-  const matched = rolesFor(role).find((r) => {
-    const configured = configuredPin(r);
-    return configured !== null && equals(pin.trim(), configured);
-  });
+  const matched = await matchRole(role, pin);
   if (!matched) return;
 
+  const matchedPin = await configuredPin(matched);
+  if (matchedPin === null) return;
+
   const store = await cookies();
-  store.set(ROLES[matched].cookie, tokenFor(matched, configuredPin(matched)!), {
+  store.set(ROLES[matched].cookie, await tokenFor(matched, matchedPin), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: !isDev(),
     path: "/",
     maxAge: MAX_AGE,
   });
@@ -97,10 +111,12 @@ export async function endSession(role: Role) {
 
 export async function isSignedIn(role: Role) {
   const store = await cookies();
-  return rolesFor(role).some((r) => {
-    const pin = configuredPin(r);
-    if (!pin) return false;
+
+  for (const r of rolesFor(role)) {
+    const pin = await configuredPin(r);
+    if (!pin) continue;
     const value = store.get(ROLES[r].cookie)?.value;
-    return value ? equals(value, tokenFor(r, pin)) : false;
-  });
+    if (value && equals(value, await tokenFor(r, pin))) return true;
+  }
+  return false;
 }

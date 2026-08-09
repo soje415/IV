@@ -12,7 +12,7 @@ export async function signIn(pin: string): Promise<{ ok: boolean; error?: string
     return { ok: false, error: "Too many attempts. Wait a few minutes." };
   }
 
-  if (!pinMatches("door", pin)) {
+  if (!(await pinMatches("door", pin))) {
     return { ok: false, error: "That PIN doesn't match." };
   }
 

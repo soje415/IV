@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function DoorPage() {
-  if (!configuredPin("door")) {
+  if (!(await configuredPin("door"))) {
     return (
       <main className="flex flex-1 items-center justify-center">
         <NoPinConfigured title="Door list locked" envVar="DOOR_PIN" />

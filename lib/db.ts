@@ -7,18 +7,23 @@ import type { NewRsvp, Rsvp } from "@/lib/types";
 
 export type { InviteDb } from "@/lib/db-types";
 
-/** Survives Next's dev hot reload, which re-evaluates modules. */
-const store = (() => {
-  const g = globalThis as typeof globalThis & { __inviteRsvps?: Rsvp[] };
+/**
+ * Survives Next's dev hot reload, which re-evaluates modules.
+ *
+ * The promise itself is cached, not the array: signing a pass code is async now,
+ * so caching the array would let two concurrent first-calls each seed the store.
+ */
+function getStore(): Promise<Rsvp[]> {
+  const g = globalThis as typeof globalThis & { __inviteRsvps?: Promise<Rsvp[]> };
   g.__inviteRsvps ??= seed();
   return g.__inviteRsvps;
-})();
+}
 
-function withIds(input: NewRsvp, passCode = createPassCode()): Rsvp {
+async function withIds(input: NewRsvp, passCode?: string): Promise<Rsvp> {
   return {
     ...input,
     id: randomUUID(),
-    passCode,
+    passCode: passCode ?? (await createPassCode()),
     arrivedAt: null,
     createdAt: new Date().toISOString(),
     children: input.children.map((child) => ({ ...child, id: randomUUID() })),
@@ -27,23 +32,27 @@ function withIds(input: NewRsvp, passCode = createPassCode()): Rsvp {
 
 export const localDb: InviteDb = {
   async createRsvp(input) {
-    const rsvp = withIds(input);
+    const store = await getStore();
+    const rsvp = await withIds(input);
     store.push(rsvp);
     return rsvp;
   },
 
   async listRsvps() {
+    const store = await getStore();
     return [...store].sort((a, b) =>
       a.familyName.localeCompare(b.familyName, "en"),
     );
   },
 
   async getByPassCode(code) {
+    const store = await getStore();
     const wanted = normalisePassCode(code);
     return store.find((r) => r.passCode === wanted) ?? null;
   },
 
   async markArrived(id) {
+    const store = await getStore();
     const rsvp = store.find((r) => r.id === id);
     if (!rsvp) return { status: "not-found" };
     if (rsvp.arrivedAt) {
@@ -54,6 +63,7 @@ export const localDb: InviteDb = {
   },
 
   async totals() {
+    const store = await getStore();
     const attending = store.filter((r) => r.attending);
     const adults = attending.reduce((n, r) => n + r.adultsCount, 0);
     const children = attending.reduce((n, r) => n + r.children.length, 0);
@@ -98,7 +108,7 @@ export const db: InviteDb = {
 };
 
 /** Sample families so the dashboard and door list have something to show. */
-function seed(): Rsvp[] {
+async function seed(): Promise<Rsvp[]> {
   const base: NewRsvp[] = [
     {
       familyName: "The Okafor Family",
@@ -161,5 +171,9 @@ function seed(): Rsvp[] {
     },
   ];
 
-  return base.map((rsvp) => withIds(rsvp, seedPassCode(rsvp.familyName)));
+  return Promise.all(
+    base.map(async (rsvp) =>
+      withIds(rsvp, await seedPassCode(rsvp.familyName)),
+    ),
+  );
 }

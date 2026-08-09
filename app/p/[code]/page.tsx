@@ -41,7 +41,7 @@ export default async function PassPage({ params }: PageProps<"/p/[code]">) {
 
   // Reject malformed codes before touching the store — a wrong HMAC suffix
   // means the code was guessed or mistyped, not issued.
-  if (!isValidPassCode(code)) notFound();
+  if (!(await isValidPassCode(code))) notFound();
 
   const rsvp = await db.getByPassCode(code);
   if (!rsvp) notFound();

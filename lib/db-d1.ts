@@ -81,7 +81,7 @@ export function d1Db(database: D1Like): InviteDb {
   return {
     async createRsvp(input: NewRsvp) {
       const id = randomUUID();
-      const passCode = createPassCode();
+      const passCode = await createPassCode();
       const createdAt = new Date().toISOString();
 
       const children: Child[] = input.children.map((child) => ({

@@ -22,13 +22,16 @@ function partsUntil(target: Date): Parts {
   };
 }
 
-/** Each digit rolls up like a scoreboard flap when it changes. */
-function Roll({ value, width }: { value: string; width: string }) {
+/**
+ * Each digit rolls up like a scoreboard flap when it changes.
+ *
+ * The rolling copy is absolutely positioned, so it contributes no width. The
+ * wrapper therefore carries its own em-based box — without it the unit collapses
+ * and the countdown reads as missing on a narrow screen.
+ */
+function Roll({ value }: { value: string }) {
   return (
-    <span
-      className={`relative inline-block overflow-hidden text-center align-top ${width}`}
-      style={{ height: "1.1em" }}
-    >
+    <span className="relative block h-[1.15em] w-[0.62em] overflow-hidden text-center">
       <AnimatePresence initial={false}>
         <m.span
           key={value}
@@ -45,19 +48,34 @@ function Roll({ value, width }: { value: string; width: string }) {
   );
 }
 
-function Unit({ value, label, pad }: { value: number; label: string; pad: number }) {
-  const text = String(value).padStart(pad, "0");
+function Unit({
+  value,
+  label,
+  short,
+}: {
+  value: number;
+  label: string;
+  short: string;
+}) {
+  const text = String(value).padStart(2, "0");
+
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-center justify-center rounded-2xl border border-gold/30 bg-white/5 px-3 py-2.5 backdrop-blur-sm sm:px-5 sm:py-4">
-        <span className="font-display text-3xl leading-none font-bold text-gold-gradient tabular-nums sm:text-5xl">
+    <div className="flex min-w-0 flex-col items-center">
+      <div className="flex w-full items-center justify-center rounded-2xl border border-gold/30 bg-white/5 px-1 py-2.5 backdrop-blur-sm sm:px-3 sm:py-4">
+        {/* clamp ties the digits to the viewport, so four boxes always fit a
+            360px screen instead of relying on a breakpoint guess. */}
+        <span className="flex font-display text-[clamp(1.6rem,8.5vw,3rem)] leading-none font-bold text-gold-gradient tabular-nums">
           {text.split("").map((digit, i) => (
-            <Roll key={i} value={digit} width="w-[0.62em]" />
+            <Roll key={i} value={digit} />
           ))}
         </span>
       </div>
-      <span className="mt-2 font-body text-[10px] tracking-[0.2em] text-cream/60 uppercase sm:text-xs">
-        {label}
+
+      {/* "MINUTES" at wide tracking is what overflows first on a phone, so the
+          narrow screen gets the abbreviation. */}
+      <span className="mt-2 font-body text-[10px] tracking-[0.1em] text-cream/60 uppercase sm:text-xs sm:tracking-[0.2em]">
+        <span className="sm:hidden">{short}</span>
+        <span className="hidden sm:inline">{label}</span>
       </span>
     </div>
   );
@@ -74,8 +92,9 @@ export function Countdown() {
   }, []);
 
   // Rendered only after mount: the server has no idea what time it is here.
+  // The placeholder matches the real height so nothing jumps on hydration.
   if (!parts) {
-    return <div className="h-[92px] sm:h-[124px]" aria-hidden="true" />;
+    return <div className="h-[104px] sm:h-[132px]" aria-hidden="true" />;
   }
 
   const started = parts.days + parts.hours + parts.minutes + parts.seconds === 0;
@@ -89,15 +108,17 @@ export function Countdown() {
   }
 
   return (
+    // A four-column grid rather than a flex row: equal tracks keep the boxes
+    // the same width and the labels on one baseline, whatever the digits do.
     <div
-      className="flex items-start justify-center gap-2 sm:gap-4"
+      className="mx-auto grid w-full max-w-md grid-cols-4 gap-2 sm:gap-3"
       role="timer"
       aria-label={`${parts.days} days until the party`}
     >
-      <Unit value={parts.days} label="Days" pad={2} />
-      <Unit value={parts.hours} label="Hours" pad={2} />
-      <Unit value={parts.minutes} label="Minutes" pad={2} />
-      <Unit value={parts.seconds} label="Seconds" pad={2} />
+      <Unit value={parts.days} label="Days" short="Days" />
+      <Unit value={parts.hours} label="Hours" short="Hrs" />
+      <Unit value={parts.minutes} label="Minutes" short="Min" />
+      <Unit value={parts.seconds} label="Seconds" short="Sec" />
     </div>
   );
 }

@@ -61,8 +61,7 @@ export const CHILD_AGE = { min: 2, max: 13 } as const;
 export const EVENT = {
   /** West Africa Time (+01:00). */
   startsAt: "2026-09-19T13:00:00+01:00",
-  /** ASSUMPTION: a four-hour party. The host gave a start time only. */
-  endsAt: "2026-09-19T17:00:00+01:00",
+  endsAt: "2026-09-19T18:00:00+01:00",
   timeZone: "Africa/Lagos",
 
   venue: {

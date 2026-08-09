@@ -44,7 +44,7 @@ export function SplitHero() {
         {/* Tabitha */}
         <div className="safe-t flex flex-col items-center justify-start px-6 text-center text-tab-deep md:items-start md:justify-center md:pl-10 md:text-left lg:pl-20">
           <m.p
-            className="font-body text-xs font-bold tracking-[0.3em] uppercase text-tab-deep/70 sm:text-sm"
+            className="font-body text-sm font-bold tracking-[0.3em] uppercase text-tab-deep/70 sm:text-base"
             variants={rise}
             initial="hidden"
             animate="show"

@@ -71,16 +71,21 @@ export default function Home() {
             Made with love for {CELEBRANTS.tabitha.firstName} &amp;{" "}
             {CELEBRANTS.abraham.firstName}
           </p>
+          <p className="mt-1.5 font-body text-[10px] tracking-[0.2em] text-cream/30 uppercase">
+            Powered by Bond Sustainable
+          </p>
           {/*
-            The host's way in. Deliberately in the footer and deliberately plain:
-            guests have no reason to tap it, and the PIN — not obscurity — is
-            what actually guards the guest list.
+            The host's way in. In the footer because guests have no reason to
+            tap it, but a real button rather than a faint link — the PIN, not
+            obscurity, is what guards the guest list, and the host has to be
+            able to find this on a phone without hunting.
           */}
           <Link
             href="/admin"
-            className="mt-3 inline-flex min-h-11 items-center font-body text-xs text-cream/35 underline underline-offset-4 hover:text-cream/60"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 font-body text-xs font-bold tracking-[0.2em] text-cream/70 uppercase transition-colors hover:border-gold/50 hover:text-cream"
           >
-            Host login
+            <span aria-hidden="true">🔐</span>
+            Admin
           </Link>
         </footer>
       </main>

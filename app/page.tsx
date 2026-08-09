@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Countdown } from "@/components/countdown";
 import { Curtain } from "@/components/curtain";
 import { Details } from "@/components/details";
@@ -8,6 +7,7 @@ import { Reveal } from "@/components/reveal";
 import { RsvpFlow } from "@/components/rsvp/rsvp-flow";
 import { SplitHero } from "@/components/split-hero";
 import { StickyRsvpBar } from "@/components/sticky-rsvp-bar";
+import { TopNav } from "@/components/top-nav";
 import { CELEBRANTS } from "@/config/event";
 
 /**
@@ -19,14 +19,12 @@ import { CELEBRANTS } from "@/config/event";
  */
 export const dynamic = "force-dynamic";
 
-const organiserLink =
-  "inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 font-body text-xs font-bold tracking-[0.2em] text-cream/70 uppercase transition-colors hover:border-gold/50 hover:text-cream";
-
 export default function Home() {
   return (
     <>
       <Curtain />
       <PreviewRibbon />
+      <TopNav />
       <SplitHero />
 
       {/* Everything below the hero shares one balloon-filled backdrop. */}
@@ -75,24 +73,6 @@ export default function Home() {
           <p className="mt-1.5 font-body text-[10px] tracking-[0.2em] text-cream/30 uppercase">
             Powered by Bond Sustainable
           </p>
-          {/*
-            The two ways in to the private side, kept together at the very
-            bottom. Guests have no reason to tap either, and the PIN — not the
-            obscurity of the URL — is what guards the guest list.
-          */}
-          <nav
-            className="mt-5 flex justify-center gap-3"
-            aria-label="Organiser pages"
-          >
-            <Link href="/admin" className={organiserLink}>
-              <span aria-hidden="true">🔐</span>
-              Admin
-            </Link>
-            <Link href="/door" className={organiserLink}>
-              <span aria-hidden="true">🚪</span>
-              Door
-            </Link>
-          </nav>
         </footer>
       </main>
 

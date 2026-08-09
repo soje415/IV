@@ -43,8 +43,13 @@ export function SplitHero() {
       <div className="relative z-10 grid min-h-[100dvh] grid-rows-2 md:grid-cols-2 md:grid-rows-1">
         {/* Tabitha */}
         <div className="safe-t flex flex-col items-center justify-start px-6 text-center text-tab-deep md:items-start md:justify-center md:pl-10 md:text-left lg:pl-20">
+          {/*
+            Clearance for the floating Admin/Door nav, which sits top-right and
+            would otherwise land on Tabitha's name. Only needed on a phone: from
+            md up this panel is vertically centred and the nav clears it anyway.
+          */}
           <m.p
-            className="font-body text-sm font-bold tracking-[0.3em] uppercase text-tab-deep/70 sm:text-base"
+            className="mt-14 font-body text-sm font-bold tracking-[0.3em] uppercase text-tab-deep/70 sm:text-base md:mt-0"
             variants={rise}
             initial="hidden"
             animate="show"

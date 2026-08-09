@@ -38,7 +38,7 @@ export default async function DoorPage() {
       <main className="flex flex-1 items-center justify-center px-5 py-20">
         <PinGate
           emoji="🚪"
-          title="Door list"
+          title="Security"
           blurb="Enter the PIN the host sent you."
           signIn={signIn}
         />

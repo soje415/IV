@@ -71,11 +71,13 @@ export default function Home() {
             {CELEBRANTS.abraham.firstName}
           </p>
           {/* Wide tracking on the full company name overflows a 360px screen,
-              so the label and the name sit on their own lines. */}
-          <p className="mt-3 font-body text-[9px] tracking-[0.2em] text-cream/25 uppercase">
+              so the label and the name sit on their own lines. Both are sized
+              and weighted to actually be readable on a phone — at 9px and 25%
+              opacity this credit was invisible in daylight. */}
+          <p className="mt-5 font-body text-[10px] tracking-[0.25em] text-cream/55 uppercase">
             Powered by
           </p>
-          <p className="mt-0.5 font-body text-[10px] tracking-[0.12em] text-cream/40 uppercase">
+          <p className="mt-1 font-body text-sm font-bold tracking-[0.08em] text-gold uppercase">
             Bond Sustainable Intergrated Limited
           </p>
         </footer>

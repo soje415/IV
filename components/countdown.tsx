@@ -33,9 +33,16 @@ function Roll({ value }: { value: string }) {
   return (
     <span className="relative block h-[1.15em] w-[0.62em] overflow-hidden text-center">
       <AnimatePresence initial={false}>
+        {/*
+          The gradient must live on the element that actually holds the glyph.
+          text-gold-gradient is `color: transparent` + `background-clip: text`,
+          and the transparent colour inherits — put it on an ancestor and this
+          absolutely-positioned digit inherits invisibility with no gradient of
+          its own to paint. That is why the numbers came out blank.
+        */}
         <m.span
           key={value}
-          className="absolute inset-0 block"
+          className="absolute inset-0 block text-gold-gradient"
           initial={{ y: "-110%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           exit={{ y: "110%", opacity: 0 }}

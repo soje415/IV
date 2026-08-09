@@ -4,6 +4,7 @@ import {
   eventTimeLabel,
   rsvpDeadlineLabel,
 } from "@/config/event";
+import { VenueMap } from "@/components/map";
 import { Reveal } from "@/components/reveal";
 
 interface Card {
@@ -102,6 +103,8 @@ export function Details() {
         {cards.map((card, i) => (
           <DetailCard key={card.title} card={card} delay={i * 0.06} />
         ))}
+        {/* The map is just another card, sized like the rest of them. */}
+        <VenueMap delay={cards.length * 0.06} />
       </div>
     </section>
   );

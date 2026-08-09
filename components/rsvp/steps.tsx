@@ -39,11 +39,17 @@ export function StepShell({
   );
 }
 
-export function AttendingStep({ form, onPick }: { form: Form; onPick: () => void }) {
+export function AttendingStep({
+  form,
+  onPick,
+}: {
+  form: Form;
+  onPick: (attending: boolean) => void;
+}) {
   const attending = form.watch("attending");
   const choose = (value: boolean) => {
     form.setValue("attending", value);
-    onPick();
+    onPick(value);
   };
 
   return (

@@ -6,6 +6,7 @@ import { useRef, useState, useTransition } from "react";
 import { useForm, type FieldPath } from "react-hook-form";
 import { submitRsvp, type SubmitResult } from "@/app/actions";
 import { emptyRsvp, rsvpSchema, type RsvpFormValues } from "@/lib/schema";
+import { Farewell } from "@/components/rsvp/farewell";
 import { ProgressMascot } from "@/components/rsvp/progress-mascot";
 import { Success } from "@/components/rsvp/success";
 import { BackButton, PrimaryButton } from "@/components/rsvp/ui";
@@ -49,12 +50,13 @@ const ATTEND_STEPS: StepId[] = [
 ];
 
 /**
- * Saying no is two taps and done: who you are, then a goodbye.
+ * Saying no is one tap and done.
  *
- * We still ask the name so the host knows who replied, but nothing beyond it —
- * a family that can't come should not be walked through a form.
+ * The flow ends on the spot with a blessing from the celebrants — nothing is
+ * asked and nothing is sent. The trade the host accepted: a decline leaves no
+ * record, so /admin shows who is coming, never who said no.
  */
-const DECLINE_STEPS: StepId[] = ["attending", "family"];
+const DECLINE_STEPS: StepId[] = ["attending"];
 
 /** Which fields must be valid before a step will let you move on. */
 const STEP_FIELDS: Record<StepId, FieldPath<RsvpFormValues>[]> = {
@@ -72,6 +74,7 @@ export function RsvpFlow() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [result, setResult] = useState<Extract<SubmitResult, { ok: true }> | null>(null);
+  const [declined, setDeclined] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const topRef = useRef<HTMLDivElement>(null);
@@ -130,6 +133,14 @@ export function RsvpFlow() {
       });
     })();
 
+  if (declined) {
+    return (
+      <div ref={topRef} className="scroll-mt-6">
+        <Farewell />
+      </div>
+    );
+  }
+
   if (result) {
     return (
       <div ref={topRef} className="scroll-mt-6">
@@ -173,7 +184,14 @@ export function RsvpFlow() {
           {step === "attending" ? (
             <AttendingStep
               form={form}
-              onPick={() => {
+              onPick={(coming) => {
+                // Saying no ends the flow right here — no name, no contact,
+                // no submission. Just the blessing. See DECLINE_STEPS.
+                if (!coming) {
+                  setDeclined(true);
+                  scrollToTop();
+                  return;
+                }
                 setDirection(1);
                 setIndex(1);
               }}

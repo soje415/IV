@@ -2,13 +2,13 @@ import Link from "next/link";
 import { Countdown } from "@/components/countdown";
 import { Curtain } from "@/components/curtain";
 import { Details } from "@/components/details";
-import { VenueMap } from "@/components/map";
 import { Balloons } from "@/components/particles";
 import { PreviewRibbon } from "@/components/preview-ribbon";
 import { Reveal } from "@/components/reveal";
 import { RsvpFlow } from "@/components/rsvp/rsvp-flow";
 import { SplitHero } from "@/components/split-hero";
 import { StickyRsvpBar } from "@/components/sticky-rsvp-bar";
+import { TopNav } from "@/components/top-nav";
 import { CELEBRANTS } from "@/config/event";
 
 /**
@@ -25,6 +25,7 @@ export default function Home() {
     <>
       <Curtain />
       <PreviewRibbon />
+      <TopNav />
       <SplitHero />
 
       {/* Everything below the hero shares one balloon-filled backdrop. */}
@@ -45,7 +46,6 @@ export default function Home() {
         </section>
 
         <Details />
-        <VenueMap />
 
         <section
           id="rsvp"

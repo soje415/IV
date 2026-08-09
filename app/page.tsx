@@ -8,7 +8,6 @@ import { Reveal } from "@/components/reveal";
 import { RsvpFlow } from "@/components/rsvp/rsvp-flow";
 import { SplitHero } from "@/components/split-hero";
 import { StickyRsvpBar } from "@/components/sticky-rsvp-bar";
-import { TopNav } from "@/components/top-nav";
 import { CELEBRANTS } from "@/config/event";
 
 /**
@@ -20,12 +19,14 @@ import { CELEBRANTS } from "@/config/event";
  */
 export const dynamic = "force-dynamic";
 
+const organiserLink =
+  "inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 font-body text-xs font-bold tracking-[0.2em] text-cream/70 uppercase transition-colors hover:border-gold/50 hover:text-cream";
+
 export default function Home() {
   return (
     <>
       <Curtain />
       <PreviewRibbon />
-      <TopNav />
       <SplitHero />
 
       {/* Everything below the hero shares one balloon-filled backdrop. */}
@@ -75,18 +76,23 @@ export default function Home() {
             Powered by Bond Sustainable
           </p>
           {/*
-            The host's way in. In the footer because guests have no reason to
-            tap it, but a real button rather than a faint link — the PIN, not
-            obscurity, is what guards the guest list, and the host has to be
-            able to find this on a phone without hunting.
+            The two ways in to the private side, kept together at the very
+            bottom. Guests have no reason to tap either, and the PIN — not the
+            obscurity of the URL — is what guards the guest list.
           */}
-          <Link
-            href="/admin"
-            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 font-body text-xs font-bold tracking-[0.2em] text-cream/70 uppercase transition-colors hover:border-gold/50 hover:text-cream"
+          <nav
+            className="mt-5 flex justify-center gap-3"
+            aria-label="Organiser pages"
           >
-            <span aria-hidden="true">🔐</span>
-            Admin
-          </Link>
+            <Link href="/admin" className={organiserLink}>
+              <span aria-hidden="true">🔐</span>
+              Admin
+            </Link>
+            <Link href="/door" className={organiserLink}>
+              <span aria-hidden="true">🚪</span>
+              Door
+            </Link>
+          </nav>
         </footer>
       </main>
 

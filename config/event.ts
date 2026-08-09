@@ -65,7 +65,7 @@ export const EVENT = {
   timeZone: "Africa/Lagos",
 
   venue: {
-    name: "The Banc Tropic Galleria",
+    name: "Tropic Galleria",
     address: "Opposite Grand Square",
     mapUrl: "https://share.google/cAeyXBmXRp9jQCQFW",
     /** Google's embed URL for the same place — see components/map.tsx. */

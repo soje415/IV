@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Countdown } from "@/components/countdown";
 import { Curtain } from "@/components/curtain";
 import { Details } from "@/components/details";
@@ -68,6 +69,17 @@ export default function Home() {
             Made with love for {CELEBRANTS.tabitha.firstName} &amp;{" "}
             {CELEBRANTS.abraham.firstName}
           </p>
+          {/*
+            The host's way in. Deliberately in the footer and deliberately plain:
+            guests have no reason to tap it, and the PIN — not obscurity — is
+            what actually guards the guest list.
+          */}
+          <Link
+            href="/admin"
+            className="mt-3 inline-flex min-h-11 items-center font-body text-xs text-cream/35 underline underline-offset-4 hover:text-cream/60"
+          >
+            Host login
+          </Link>
         </footer>
       </main>
 

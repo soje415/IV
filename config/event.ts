@@ -45,6 +45,14 @@ export const CELEBRANT_LIST: Celebrant[] = [
 /** Flip to true once every TODO(host) below is filled in for real. */
 export const DETAILS_CONFIRMED = false;
 
+/**
+ * The ages this party is planned for.
+ *
+ * One source of truth: it bounds the age picker in the RSVP form, the server's
+ * validation, and the buckets on the dashboard histogram.
+ */
+export const CHILD_AGE = { min: 2, max: 13 } as const;
+
 export const EVENT = {
   /** TODO(host): the real party date and time. West Africa Time (+01:00). */
   startsAt: "2026-09-19T15:00:00+01:00",
@@ -52,16 +60,15 @@ export const EVENT = {
   timeZone: "Africa/Lagos",
 
   venue: {
-    /** TODO(host) */
-    name: "Venue to be confirmed",
-    address: "Address to be confirmed",
+    name: "The Banc Tropic Galleria",
+    address: "Opposite Grand Square",
+    /** TODO(host): a Google Maps link, so guests get one-tap directions. */
     mapUrl: "",
   },
 
   /** TODO(host) */
   dressCode: "Come dressed to play — bright colours welcome",
-  /** TODO(host) */
-  giftPolicy: "Your presence is the present. No gifts needed.",
+  giftPolicy: "Gifts are welcome, and so is just showing up.",
   /** TODO(host): last day to RSVP. */
   rsvpDeadline: "2026-09-12T23:59:00+01:00",
   /** TODO(host): number guests can call with questions. */

@@ -4,6 +4,7 @@ import { m } from "motion/react";
 import { useEffect } from "react";
 import type { SubmitResult } from "@/app/actions";
 import { PassCard } from "@/components/pass/pass-card";
+import { CELEBRANTS } from "@/config/event";
 
 /** Gold, pink and blue — one burst from each bottom corner, then the middle. */
 async function fireConfetti() {
@@ -35,11 +36,17 @@ function Declined({ familyName }: { familyName: string }) {
         💛
       </span>
       <h3 className="mt-4 font-display text-2xl font-bold text-cream">
-        Thank you for letting us know
+        We&apos;ll miss you, {familyName}
       </h3>
       <p className="mt-3 font-body text-sm text-cream/70 sm:text-base">
-        We&apos;ll miss you, {familyName}. Your message will be up on the screen
-        at the party.
+        Thank you for letting us know.
+      </p>
+      <p className="mt-5 font-body text-base text-gold italic sm:text-lg">
+        May God keep you and your family, and give you joy until we meet again.
+        Amen.
+      </p>
+      <p className="mt-5 font-display text-sm font-semibold text-cream/80">
+        — {CELEBRANTS.tabitha.firstName} &amp; {CELEBRANTS.abraham.firstName}
       </p>
     </m.div>
   );

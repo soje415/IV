@@ -1,4 +1,5 @@
 import { signOut } from "@/app/admin/actions";
+import { AgeHistogram, TeamSplit } from "@/components/admin/charts";
 import { CELEBRANTS, EVENT } from "@/config/event";
 import type { Rsvp, Totals } from "@/lib/types";
 import { avatarById } from "@/lib/types";
@@ -71,6 +72,12 @@ export function Dashboard({ rsvps, totals }: { rsvps: Rsvp[]; totals: Totals }) 
           🏷️ Print name tags
         </a>
       </div>
+
+      {/* ── The shape of the guest list, for planning ── */}
+      <section className="mt-6 grid gap-3 md:grid-cols-2">
+        <AgeHistogram rsvps={rsvps} />
+        <TeamSplit rsvps={rsvps} />
+      </section>
 
       {/* ── Allergies: the one thing that must not be missed ── */}
       <section className="mt-10">

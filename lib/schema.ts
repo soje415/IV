@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CHILD_AGE } from "@/config/event";
 
 /**
  * One schema, used by the form in the browser and again by the server action.
@@ -13,7 +14,11 @@ const CONTACT_RE = /^(?:[^\s@]+@[^\s@]+\.[^\s@]{2,}|\+?[\d\s()\-]{7,20})$/;
 
 export const childSchema = z.object({
   name: z.string().min(1, "Please add their name").max(60, "That's a long name!"),
-  age: z.number().int().min(0).max(17),
+  age: z
+    .number()
+    .int()
+    .min(CHILD_AGE.min, `This party is for ages ${CHILD_AGE.min}–${CHILD_AGE.max}`)
+    .max(CHILD_AGE.max, `This party is for ages ${CHILD_AGE.min}–${CHILD_AGE.max}`),
   allergies: z.string().max(200, "Please keep this shorter"),
   avatar: z.string().min(1),
 });
@@ -69,7 +74,7 @@ export const emptyRsvp: RsvpFormValues = {
 
 export const emptyChild = {
   name: "",
-  age: 5,
+  age: 6,
   allergies: "",
   avatar: "star",
 };

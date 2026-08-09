@@ -48,7 +48,13 @@ const ATTEND_STEPS: StepId[] = [
   "consent",
 ];
 
-const DECLINE_STEPS: StepId[] = ["attending", "family", "wish"];
+/**
+ * Saying no is two taps and done: who you are, then a goodbye.
+ *
+ * We still ask the name so the host knows who replied, but nothing beyond it —
+ * a family that can't come should not be walked through a form.
+ */
+const DECLINE_STEPS: StepId[] = ["attending", "family"];
 
 /** Which fields must be valid before a step will let you move on. */
 const STEP_FIELDS: Record<StepId, FieldPath<RsvpFormValues>[]> = {

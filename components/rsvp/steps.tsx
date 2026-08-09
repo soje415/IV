@@ -2,7 +2,7 @@
 
 import { AnimatePresence, m } from "motion/react";
 import { useFieldArray, type UseFormReturn } from "react-hook-form";
-import { CELEBRANT_LIST } from "@/config/event";
+import { CELEBRANT_LIST, CHILD_AGE } from "@/config/event";
 import { emptyChild, type RsvpFormValues } from "@/lib/schema";
 import { avatarById } from "@/lib/types";
 import {
@@ -181,7 +181,10 @@ export function ChildrenStep({ form }: { form: Form }) {
                       {...form.register(`children.${index}.age`, { valueAsNumber: true })}
                       className={`${selectClass} w-full`}
                     >
-                      {Array.from({ length: 18 }, (_, age) => (
+                      {Array.from(
+                        { length: CHILD_AGE.max - CHILD_AGE.min + 1 },
+                        (_, i) => CHILD_AGE.min + i,
+                      ).map((age) => (
                         <option key={age} value={age}>
                           {age}
                         </option>

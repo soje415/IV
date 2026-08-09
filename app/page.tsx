@@ -70,8 +70,13 @@ export default function Home() {
             Made with love for {CELEBRANTS.tabitha.firstName} &amp;{" "}
             {CELEBRANTS.abraham.firstName}
           </p>
-          <p className="mt-1.5 font-body text-[10px] tracking-[0.2em] text-cream/30 uppercase">
-            Powered by Bond Sustainable
+          {/* Wide tracking on the full company name overflows a 360px screen,
+              so the label and the name sit on their own lines. */}
+          <p className="mt-3 font-body text-[9px] tracking-[0.2em] text-cream/25 uppercase">
+            Powered by
+          </p>
+          <p className="mt-0.5 font-body text-[10px] tracking-[0.12em] text-cream/40 uppercase">
+            Bond Sustainable Intergrated Limited
           </p>
         </footer>
       </main>

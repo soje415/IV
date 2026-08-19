@@ -31,11 +31,11 @@ export function SplitHero() {
       {/* ── Backgrounds. Particles are clipped to their own half. ── */}
       <div className="absolute inset-0">
         <div className="clip-panel-a absolute inset-0 bg-gradient-to-br from-tab-cream via-tab-pink/70 to-tab-lilac">
-          <PhotoBackdrop photos={tabitha.photos} opacity={0.22} />
+          <PhotoBackdrop photos={tabitha.photos} opacity={0.5} />
           <TabithaParticles />
         </div>
         <div className="clip-panel-b absolute inset-0 bg-gradient-to-br from-abe-navy via-abe-deep to-abe-violet/50">
-          <PhotoBackdrop photos={abraham.photos} opacity={0.25} />
+          <PhotoBackdrop photos={abraham.photos} opacity={0.55} />
           <AbrahamParticles />
         </div>
         {/* Gold seam tracing the join */}

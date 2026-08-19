@@ -35,10 +35,8 @@ export const rsvpSchema = z
       .min(5, "We need a way to reach you")
       .max(120)
       .regex(CONTACT_RE, "Enter an email or a phone number"),
-    adultsCount: z.number().int().min(0).max(12),
+    adultsCount: z.number().int().min(1).max(2, "No more than 2 grown-ups, please"),
     children: z.array(childSchema).max(10, "That's a lot of children!"),
-    staying: z.boolean(),
-    emergencyPhone: z.string().max(40),
     team: z.enum(["tabitha", "abraham"]).nullable(),
     wish: z.string().max(300, "Please keep your message shorter"),
     photoConsent: z.boolean(),
@@ -49,10 +47,6 @@ export const rsvpSchema = z
   .refine((v) => !v.attending || v.adultsCount + v.children.length > 0, {
     message: "Add at least one person",
     path: ["adultsCount"],
-  })
-  .refine((v) => !v.attending || v.staying || v.emergencyPhone.length >= 7, {
-    message: "We need a number to reach you on during the party",
-    path: ["emergencyPhone"],
   });
 
 export type RsvpFormValues = z.infer<typeof rsvpSchema>;
@@ -63,8 +57,6 @@ export const emptyRsvp: RsvpFormValues = {
   contact: "",
   adultsCount: 1,
   children: [],
-  staying: true,
-  emergencyPhone: "",
   team: null,
   wish: "",
   photoConsent: false,

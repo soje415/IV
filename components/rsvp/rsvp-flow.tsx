@@ -16,7 +16,6 @@ import {
   ChildrenStep,
   ConsentStep,
   FamilyStep,
-  StayingStep,
   TeamStep,
   WishStep,
 } from "@/components/rsvp/steps";
@@ -33,7 +32,6 @@ type StepId =
   | "family"
   | "adults"
   | "children"
-  | "staying"
   | "team"
   | "wish"
   | "consent";
@@ -43,7 +41,6 @@ const ATTEND_STEPS: StepId[] = [
   "family",
   "adults",
   "children",
-  "staying",
   "team",
   "wish",
   "consent",
@@ -64,7 +61,6 @@ const STEP_FIELDS: Record<StepId, FieldPath<RsvpFormValues>[]> = {
   family: ["familyName", "contact"],
   adults: ["adultsCount"],
   children: ["children"],
-  staying: ["emergencyPhone"],
   team: [],
   wish: ["wish"],
   consent: [],
@@ -200,7 +196,6 @@ export function RsvpFlow() {
           {step === "family" ? <FamilyStep form={form} /> : null}
           {step === "adults" ? <AdultsStep form={form} /> : null}
           {step === "children" ? <ChildrenStep form={form} /> : null}
-          {step === "staying" ? <StayingStep form={form} /> : null}
           {step === "team" ? <TeamStep form={form} /> : null}
           {step === "wish" ? <WishStep form={form} /> : null}
           {step === "consent" ? <ConsentStep form={form} /> : null}

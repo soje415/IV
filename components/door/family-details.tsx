@@ -54,23 +54,6 @@ export function FamilyDetails({ family }: { family: DoorFamily }) {
           </ul>
         </div>
       ) : null}
-
-      {!family.staying ? (
-        <p className="mt-3 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 font-body text-sm text-cream/75">
-          Dropping off
-          {family.emergencyPhone ? (
-            <>
-              {" · call "}
-              <a
-                href={`tel:${family.emergencyPhone.replace(/\s/g, "")}`}
-                className="font-bold text-cream underline underline-offset-4"
-              >
-                {family.emergencyPhone}
-              </a>
-            </>
-          ) : null}
-        </p>
-      ) : null}
     </>
   );
 }

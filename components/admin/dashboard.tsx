@@ -224,7 +224,6 @@ function FamilyCard({ rsvp }: { rsvp: Rsvp }) {
         {rsvp.children.length > 0
           ? ` · ${rsvp.children.length} ${rsvp.children.length === 1 ? "child" : "children"}`
           : ""}
-        {rsvp.staying ? " · staying" : " · dropping off"}
       </p>
 
       {rsvp.children.length > 0 ? (
@@ -243,9 +242,6 @@ function FamilyCard({ rsvp }: { rsvp: Rsvp }) {
       ) : null}
 
       <dl className="mt-3 space-y-0.5 font-body text-xs text-cream/45">
-        {!rsvp.staying && rsvp.emergencyPhone ? (
-          <div>Reach on: {rsvp.emergencyPhone}</div>
-        ) : null}
         {rsvp.notes ? <div>Note: {rsvp.notes}</div> : null}
         {!rsvp.photoConsent ? (
           <div className="text-tab-pink">No photos of their children</div>

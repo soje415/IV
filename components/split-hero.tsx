@@ -1,6 +1,7 @@
 "use client";
 
-import { m } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
+import { useEffect, useState } from "react";
 import { CELEBRANTS } from "@/config/event";
 import { Monogram } from "@/components/monogram";
 import { AbrahamParticles, TabithaParticles } from "@/components/particles";
@@ -30,9 +31,11 @@ export function SplitHero() {
       {/* ── Backgrounds. Particles are clipped to their own half. ── */}
       <div className="absolute inset-0">
         <div className="clip-panel-a absolute inset-0 bg-gradient-to-br from-tab-cream via-tab-pink/70 to-tab-lilac">
+          <PhotoBackdrop photos={tabitha.photos} opacity={0.22} />
           <TabithaParticles />
         </div>
         <div className="clip-panel-b absolute inset-0 bg-gradient-to-br from-abe-navy via-abe-deep to-abe-violet/50">
+          <PhotoBackdrop photos={abraham.photos} opacity={0.25} />
           <AbrahamParticles />
         </div>
         {/* Gold seam tracing the join */}
@@ -116,6 +119,41 @@ export function SplitHero() {
 
       <ScrollCue />
     </section>
+  );
+}
+
+const SLIDESHOW_MS = 3000;
+
+/** Faint photos cycling behind a name — one at a time, crossfading. */
+function PhotoBackdrop({ photos, opacity = 0.25 }: { photos: string[]; opacity?: number }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (photos.length <= 1) return;
+    const id = setInterval(
+      () => setIndex((i) => (i + 1) % photos.length),
+      SLIDESHOW_MS,
+    );
+    return () => clearInterval(id);
+  }, [photos.length]);
+
+  if (photos.length === 0) return null;
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <AnimatePresence initial={false}>
+        <m.img
+          key={index}
+          src={photos[index]}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          initial={{ opacity: 0 }}
+          animate={{ opacity }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9, ease: "easeInOut" }}
+        />
+      </AnimatePresence>
+    </div>
   );
 }
 

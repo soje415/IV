@@ -111,14 +111,15 @@ export function AdultsStep({ form }: { form: Form }) {
   return (
     <StepShell
       title="How many grown-ups?"
-      subtitle="Including yourself."
+      subtitle="One or two — everyone stays and celebrates together."
     >
       <div className="py-4">
         <Stepper
           value={value}
           onChange={(next) => form.setValue("adultsCount", next)}
           label="adult"
-          max={12}
+          min={1}
+          max={2}
         />
       </div>
       {form.formState.errors.adultsCount ? (
@@ -241,46 +242,6 @@ export function ChildrenStep({ form }: { form: Form }) {
           No children coming? Just carry on.
         </p>
       ) : null}
-    </StepShell>
-  );
-}
-
-export function StayingStep({ form }: { form: Form }) {
-  const staying = form.watch("staying");
-
-  return (
-    <StepShell
-      title="Staying or dropping off?"
-      subtitle="Either is completely fine — we just need to know."
-    >
-      <BigChoice
-        emoji="🫖"
-        label="We're staying"
-        sublabel="Grown-ups at the party too"
-        selected={staying}
-        onSelect={() => form.setValue("staying", true)}
-      />
-      <BigChoice
-        emoji="👋"
-        label="Dropping off"
-        sublabel="We'll be back at pick-up"
-        selected={!staying}
-        onSelect={() => form.setValue("staying", false)}
-      />
-
-      <Field
-        label={staying ? "Mobile number (optional)" : "Number to reach you on"}
-        hint="In case we need you during the party."
-        error={form.formState.errors.emergencyPhone?.message}
-      >
-        <input
-          {...form.register("emergencyPhone")}
-          className={inputClass}
-          placeholder="+234 803 000 0000"
-          inputMode="tel"
-          autoComplete="tel"
-        />
-      </Field>
     </StepShell>
   );
 }

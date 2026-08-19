@@ -7,8 +7,6 @@ CREATE TABLE rsvps (
   contact         TEXT    NOT NULL,
   attending       INTEGER NOT NULL CHECK (attending IN (0, 1)),
   adults_count    INTEGER NOT NULL DEFAULT 1 CHECK (adults_count >= 0),
-  staying         INTEGER NOT NULL DEFAULT 1 CHECK (staying IN (0, 1)),
-  emergency_phone TEXT    NOT NULL DEFAULT '',
   team            TEXT             CHECK (team IN ('tabitha', 'abraham') OR team IS NULL),
   wish            TEXT    NOT NULL DEFAULT '',
   photo_consent   INTEGER NOT NULL DEFAULT 0 CHECK (photo_consent IN (0, 1)),

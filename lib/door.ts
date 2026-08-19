@@ -3,10 +3,10 @@ import type { Rsvp } from "@/lib/types";
 /**
  * What the door is allowed to see.
  *
- * The bouncer needs four things: is this family expected, how many goodie bags,
- * any allergies, and who to ring if a child was dropped off. Contacts, wishes,
- * notes and photo consent stay on /admin — the person on the gate got the link
- * on WhatsApp that morning and does not need the parents' phone book.
+ * The bouncer needs three things: is this family expected, how many goodie bags,
+ * and any allergies. Contacts, wishes, notes and photo consent stay on /admin —
+ * the person on the gate got the link on WhatsApp that morning and does not need
+ * the parents' phone book.
  */
 export interface DoorFamily {
   id: string;
@@ -18,9 +18,6 @@ export interface DoorFamily {
   /** Searchable, so "Ada's mum" finds the Okafors. */
   childNames: string[];
   allergies: { name: string; note: string }[];
-  staying: boolean;
-  /** Only meaningful for drop-offs, which is when the door needs it. */
-  emergencyPhone: string;
   arrivedAt: string | null;
 }
 
@@ -35,8 +32,6 @@ export function toDoorFamily(rsvp: Rsvp): DoorFamily {
     allergies: rsvp.children
       .filter((child) => child.allergies.trim() !== "")
       .map((child) => ({ name: child.name, note: child.allergies.trim() })),
-    staying: rsvp.staying,
-    emergencyPhone: rsvp.staying ? "" : rsvp.emergencyPhone,
     arrivedAt: rsvp.arrivedAt,
   };
 }

@@ -16,9 +16,6 @@ export interface Rsvp {
   contact: string;
   attending: boolean;
   adultsCount: number;
-  /** True if the adults are staying at the party rather than dropping off. */
-  staying: boolean;
-  emergencyPhone: string;
   team: CelebrantId | null;
   wish: string;
   photoConsent: boolean;

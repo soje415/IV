@@ -69,6 +69,11 @@ export function Details() {
       title: "Gifts",
       lines: [EVENT.giftPolicy],
     },
+    {
+      icon: "🎬",
+      title: "Free cinema",
+      lines: [EVENT.cinemaNote],
+    },
   ];
 
   // Both of these are omissions the host chose. An empty card that says a

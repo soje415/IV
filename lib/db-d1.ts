@@ -12,8 +12,6 @@ interface RsvpRow {
   contact: string;
   attending: number;
   adults_count: number;
-  staying: number;
-  emergency_phone: string;
   team: string | null;
   wish: string;
   photo_consent: number;
@@ -46,8 +44,6 @@ const toRsvp = (row: RsvpRow, children: Child[]): Rsvp => ({
   contact: row.contact,
   attending: row.attending === 1,
   adultsCount: row.adults_count,
-  staying: row.staying === 1,
-  emergencyPhone: row.emergency_phone,
   team: row.team === "tabitha" || row.team === "abraham" ? row.team : null,
   wish: row.wish,
   photoConsent: row.photo_consent === 1,
@@ -59,7 +55,7 @@ const toRsvp = (row: RsvpRow, children: Child[]): Rsvp => ({
 });
 
 const RSVP_COLUMNS =
-  "id, family_name, contact, attending, adults_count, staying, emergency_phone, team, wish, photo_consent, notes, pass_code, arrived_at, created_at";
+  "id, family_name, contact, attending, adults_count, team, wish, photo_consent, notes, pass_code, arrived_at, created_at";
 
 export function d1Db(database: D1Like): InviteDb {
   const childrenOf = async (rsvpId: string) => {
@@ -94,7 +90,7 @@ export function d1Db(database: D1Like): InviteDb {
         database
           .prepare(
             `INSERT INTO rsvps (${RSVP_COLUMNS})
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, NULL, ?13)`,
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, NULL, ?11)`,
           )
           .bind(
             id,
@@ -102,8 +98,6 @@ export function d1Db(database: D1Like): InviteDb {
             input.contact,
             input.attending ? 1 : 0,
             input.adultsCount,
-            input.staying ? 1 : 0,
-            input.emergencyPhone,
             input.team,
             input.wish,
             input.photoConsent ? 1 : 0,

@@ -16,6 +16,8 @@ export interface Celebrant {
   /** Label for the party-games team a guest can join. */
   team: string;
   tagline: string;
+  /** Photos shown faintly behind the name in the hero, cycling every 3s. */
+  photos: string[];
 }
 
 export const CELEBRANTS: Record<CelebrantId, Celebrant> = {
@@ -26,6 +28,7 @@ export const CELEBRANTS: Record<CelebrantId, Celebrant> = {
     turning: 4,
     team: "Team Tabitha",
     tagline: "Sparkles, butterflies and birthday cake",
+    photos: ["/tabitha-1.webp", "/tabitha-2.webp"],
   },
   abraham: {
     id: "abraham",
@@ -34,6 +37,13 @@ export const CELEBRANTS: Record<CelebrantId, Celebrant> = {
     turning: 10,
     team: "Team Abraham",
     tagline: "Double digits. Let's go.",
+    photos: [
+      "/abraham-1.webp",
+      "/abraham-2.webp",
+      "/abraham-3.webp",
+      "/abraham-4.webp",
+      "/abraham-5.webp",
+    ],
   },
 };
 
@@ -65,8 +75,8 @@ export const EVENT = {
   timeZone: "Africa/Lagos",
 
   venue: {
-    name: "Tropic Galleria",
-    address: "Opposite Grand Square",
+    name: "The BLANC",
+    address: "Beside Grand Square",
     mapUrl: "https://share.google/cAeyXBmXRp9jQCQFW",
     /** Google's embed URL for the same place — see components/map.tsx. */
     embedUrl:
@@ -74,7 +84,9 @@ export const EVENT = {
   },
 
   dressCode: "Dress to play — there'll be children everywhere",
-  giftPolicy: "Gifts are welcome, and so is just showing up.",
+  giftPolicy: "Gifts are warmly welcome — thank you!",
+  /** The first-come treat advertised on the invite. */
+  cinemaNote: "The first 20 children through the door get a free cinema movie.",
   /**
    * No deadline: the host is sending this link to people they know, and would
    * rather a late yes than a closed door.

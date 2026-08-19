@@ -44,8 +44,6 @@ export async function submitRsvp(raw: unknown): Promise<SubmitResult> {
     contact: data.contact.trim(),
     attending: data.attending,
     adultsCount: data.attending ? data.adultsCount : 0,
-    staying: data.staying,
-    emergencyPhone: data.emergencyPhone.trim(),
     team: data.team,
     wish: data.wish.trim(),
     photoConsent: data.photoConsent,

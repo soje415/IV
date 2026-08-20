@@ -37,13 +37,7 @@ export const CELEBRANTS: Record<CelebrantId, Celebrant> = {
     turning: 10,
     team: "Team Abraham",
     tagline: "Double digits. Let's go.",
-    photos: [
-      "/abraham-1.webp",
-      "/abraham-2.webp",
-      "/abraham-3.webp",
-      "/abraham-4.webp",
-      "/abraham-5.webp",
-    ],
+    photos: ["/abraham-1.webp"],
   },
 };
 

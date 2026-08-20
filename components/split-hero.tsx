@@ -30,12 +30,10 @@ export function SplitHero() {
     <section className="relative min-h-[100dvh] w-full overflow-hidden">
       {/* ── Backgrounds. Particles are clipped to their own half. ── */}
       <div className="absolute inset-0">
-        <div className="clip-panel-a absolute inset-0 bg-gradient-to-br from-tab-cream via-tab-pink/70 to-tab-lilac">
-          <PhotoBackdrop photos={tabitha.photos} opacity={0.5} />
+        <div className="clip-panel-a absolute inset-0 bg-gradient-to-br from-abe-navy via-abe-deep to-abe-violet/50">
           <TabithaParticles />
         </div>
         <div className="clip-panel-b absolute inset-0 bg-gradient-to-br from-abe-navy via-abe-deep to-abe-violet/50">
-          <PhotoBackdrop photos={abraham.photos} opacity={0.55} />
           <AbrahamParticles />
         </div>
         {/* Gold seam tracing the join */}
@@ -45,14 +43,14 @@ export function SplitHero() {
       {/* ── Content ── */}
       <div className="relative z-10 grid min-h-[100dvh] grid-rows-2 md:grid-cols-2 md:grid-rows-1">
         {/* Tabitha */}
-        <div className="safe-t flex flex-col items-center justify-start px-6 text-center text-tab-deep md:items-start md:justify-center md:pl-10 md:text-left lg:pl-20">
+        <div className="safe-t flex flex-col items-center justify-start px-6 text-center text-cream md:items-start md:justify-center md:pl-10 md:text-left lg:pl-20">
           {/*
             Clearance for the floating Admin/Door nav, which sits top-right and
             would otherwise land on Tabitha's name. Only needed on a phone: from
             md up this panel is vertically centred and the nav clears it anyway.
           */}
           <m.p
-            className="mt-14 font-body text-sm font-bold tracking-[0.3em] uppercase text-tab-deep/70 sm:text-base md:mt-0"
+            className="mt-14 font-body text-sm font-bold tracking-[0.3em] uppercase text-gold/80 sm:text-base md:mt-0"
             variants={rise}
             initial="hidden"
             animate="show"
@@ -60,6 +58,15 @@ export function SplitHero() {
           >
             You&apos;re invited
           </m.p>
+          <m.div
+            className="mt-4 md:mt-6"
+            variants={rise}
+            initial="hidden"
+            animate="show"
+            custom={1.35}
+          >
+            <Portrait photos={tabitha.photos} alt={tabitha.firstName} />
+          </m.div>
           <m.h1
             className="font-display text-5xl leading-[0.95] font-bold sm:text-6xl md:text-7xl lg:text-8xl"
             variants={rise}
@@ -70,7 +77,7 @@ export function SplitHero() {
             {tabitha.firstName}
           </m.h1>
           <m.p
-            className="mt-2 max-w-[15ch] font-body text-sm text-tab-deep/80 sm:text-base md:mt-4 md:max-w-[22ch]"
+            className="mt-2 max-w-[15ch] font-body text-sm text-cream/75 sm:text-base md:mt-4 md:max-w-[22ch]"
             variants={rise}
             initial="hidden"
             animate="show"
@@ -82,6 +89,15 @@ export function SplitHero() {
 
         {/* Abraham */}
         <div className="flex flex-col items-center justify-end px-6 pb-24 text-center text-cream md:items-end md:justify-center md:pr-10 md:pb-0 lg:pr-20">
+          <m.div
+            className="mb-4 md:mb-6"
+            variants={rise}
+            initial="hidden"
+            animate="show"
+            custom={1.5}
+          >
+            <Portrait photos={abraham.photos} alt={abraham.firstName} />
+          </m.div>
           <m.h1
             className="font-display text-5xl leading-[0.95] font-bold sm:text-6xl md:text-7xl lg:text-8xl"
             variants={rise}
@@ -124,8 +140,8 @@ export function SplitHero() {
 
 const SLIDESHOW_MS = 3000;
 
-/** Faint photos cycling behind a name — one at a time, crossfading. */
-function PhotoBackdrop({ photos, opacity = 0.25 }: { photos: string[]; opacity?: number }) {
+/** A small framed portrait beside a name — rotates when there's more than one. */
+function Portrait({ photos, alt }: { photos: string[]; alt: string }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -140,17 +156,17 @@ function PhotoBackdrop({ photos, opacity = 0.25 }: { photos: string[]; opacity?:
   if (photos.length === 0) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div className="relative size-24 overflow-hidden rounded-2xl border-2 border-gold/70 shadow-lg shadow-black/40 sm:size-28 md:size-36">
       <AnimatePresence initial={false}>
         <m.img
           key={index}
           src={photos[index]}
-          alt=""
+          alt={alt}
           className="absolute inset-0 h-full w-full object-cover"
           initial={{ opacity: 0 }}
-          animate={{ opacity }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.9, ease: "easeInOut" }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
         />
       </AnimatePresence>
     </div>
